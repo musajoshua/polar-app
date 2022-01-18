@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Implement a replacement for useState which keeps values in the localStorage.
@@ -31,14 +31,25 @@ import React from 'react';
 type SetLocalStorage<V> = (newValue: V) => void;
 type UseLocalStorageStateTuple<V> = readonly [V, SetLocalStorage<V>];
 
-export function useLocalStorageState<V extends string>(key: string, initialValue: V): UseLocalStorageStateTuple<V> {
+export function useLocalStorageState<V extends string>(
+  key: string,
+  initialValue: V
+): UseLocalStorageStateTuple<V> {
+  // TODO: implement this code
+  const [value, setValue] = React.useState(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      return initialValue;
+    }
+  });
 
-    // TODO: implement this code
+  const setter = React.useCallback((newValue: V) => {
+    // noop
+    localStorage.setItem(key, JSON.stringify(newValue));
+    setValue(newValue);
+  }, []);
 
-    const setter = React.useCallback((newValue: V) => {
-        // noop
-    }, [])
-
-    return [initialValue, setter];
-
+  return [value, setter];
 }
